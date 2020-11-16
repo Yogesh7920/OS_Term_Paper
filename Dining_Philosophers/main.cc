@@ -3,11 +3,11 @@
 #include "Philosopher.h"
 
 #define N 10
-#define loop_count 1000
+// #define loop_count 1e5
 #define output false
 
 // int N = 10;
-// int loop_count = 1000;
+int loop_count = 1e4;
 mutex mtx;
 sem_t S[25];
 vector<Philosopher> ps;
@@ -40,7 +40,9 @@ Philosopher right(int i)
 
 void test(int i)
 {
-    if (ps[i].state == HUNGRY && left(i).state != EATING && right(i).state != EATING)
+    if (ps[i].state == HUNGRY &&
+        left(i).state != EATING &&
+        right(i).state != EATING)
     {
         ps[i].state = EATING;
         sem_post(&S[i]);
@@ -69,7 +71,9 @@ void test_TM(int i)
 {
     atomic_commit
     {
-        if (ps[i].state == HUNGRY && left(i).state != EATING && right(i).state != EATING)
+        if (ps[i].state == HUNGRY &&
+            left(i).state != EATING &&
+            right(i).state != EATING)
         {
             ps[i].state = EATING;
             // sem_post(&S[i]);
@@ -108,30 +112,7 @@ void philosopher_lock(int i)
         put_fork(i);
     }
 }
-/* 
-! Wrong
-void philosopher_TM(int i)
-{
-    for (int j = 0; j < loop_count; j++)
-    {
 
-        ps[i].thinking();
-        if (output)
-            cout << i << " Eating Start\n"; // * ostream can not be inside atomic as it is un-safe transaction function
-        atomic_commit
-        {
-            if (left(i).state != EATING && right(i).state != EATING)
-            {
-                for (int k = 0; k < 100; k++)
-                    ;
-                // * Eating method not used as it is a error, un-safe transcation function
-            }
-        }
-        if (output)
-            cout << i << " Eating End\n";
-    }
-}
-*/
 void philosopher_TM(int i)
 {
     for (int j = 0; j < loop_count; j++)
@@ -193,12 +174,17 @@ void TM_based()
 
 int main()
 {
-    init();
-    lock_based();
-    ps.clear();
-    init();
-    TM_based();
-    ps.clear();
+    for (int i = 1e3; i <= 256e3; i *= 2)
+    {
+        cout << "loop count = " << i << endl;
+        loop_count = i;
+        init();
+        lock_based();
+        ps.clear();
+        init();
+        TM_based();
+        ps.clear();
+    }
 
     return 0;
 }
