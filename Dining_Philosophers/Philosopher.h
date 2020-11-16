@@ -5,6 +5,8 @@
 #include "iostream"
 using namespace std;
 
+#define output false
+
 random_device rd;
 mt19937 mt(rd());
 
@@ -32,19 +34,23 @@ public:
     {
         uniform_int_distribution<int> distribution(mn, mx);
         int x = distribution(mt);
-        // cout << id << ":Thinking Start\n";
+        if (output)
+            cout << id << ":Thinking Start\n";
         for (int i = 0; i < x; i++)
             ;
-        // cout << id << ":Thinking End\n";
+        if (output)
+            cout << id << ":Thinking End\n";
     }
     void eating(int mn = 99, int mx = 99)
     {
         uniform_int_distribution<int> distribution(mn, mx);
         int x = distribution(mt);
-        // cout << id << ":Eating Start\n";
+        if (output)
+            cout << id << ":Eating Start\n";
         for (int i = 0; i < x; i++)
             ;
-        // cout << id << ":Eating End\n";
+        if (output)
+            cout << id << ":Eating End\n";
     }
 };
 

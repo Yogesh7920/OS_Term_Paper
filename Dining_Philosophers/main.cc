@@ -3,9 +3,13 @@
 #include "Philosopher.h"
 
 #define N 10
+#define loop_count 1000
+#define output false
 
+// int N = 10;
+// int loop_count = 1000;
 mutex mtx;
-sem_t S[N];
+sem_t S[25];
 vector<Philosopher> ps;
 
 using namespace std;
@@ -63,7 +67,7 @@ void put_fork(int i)
 
 void philosopher_lock(int i)
 {
-    for (int j = 0; j < 50; j++)
+    for (int j = 0; j < loop_count; j++)
     {
         ps[i].thinking();
         take_fork(i);
@@ -74,11 +78,12 @@ void philosopher_lock(int i)
 
 void philosopher_TM(int i)
 {
-    for (int j = 0; j < 100; j++)
+    for (int j = 0; j < loop_count; j++)
     {
 
         ps[i].thinking();
-        // cout << i << " Eating Start\n";
+        if (output)
+            cout << i << " Eating Start\n"; // * ostream can not be inside atomic as it is un-safe transaction function
         atomic_commit
         {
             if (left(i).state != EATING && right(i).state != EATING)
@@ -87,7 +92,8 @@ void philosopher_TM(int i)
                     ;
             }
         }
-        // cout << i << " Eating End\n";
+        if (output)
+            cout << i << " Eating End\n";
     }
 }
 
@@ -145,6 +151,7 @@ int main()
     ps.clear();
     init();
     TM_based();
+    ps.clear();
 
     return 0;
 }
