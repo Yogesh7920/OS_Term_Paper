@@ -1,7 +1,7 @@
 #include "BST.h"
 #include <bits/stdc++.h>
 
-#define ops 1e5
+#define ops 1e6
 
 using namespace std;
 
@@ -45,7 +45,7 @@ void mutex_call()
     t2.join();
     end = clock();
     double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-    cout << "Mutex: " << time_taken << setprecision(5) << " sec" << endl;
+    cout << "Lock-Based: " << time_taken << setprecision(5) << " sec" << endl;
 }
 
 void STM_call()
@@ -57,7 +57,7 @@ void STM_call()
     t2.join();
     end = clock();
     double time_taken = double(end - start) / double(CLOCKS_PER_SEC);
-    cout << "STM: " << time_taken << setprecision(5) << " sec" << endl;
+    cout << "Lock-Free: " << time_taken << setprecision(5) << " sec" << endl;
 }
 
 void RBT_init()

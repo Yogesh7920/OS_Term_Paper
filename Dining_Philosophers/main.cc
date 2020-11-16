@@ -65,17 +65,51 @@ void put_fork(int i)
     mtx.unlock();
 }
 
+void test_TM(int i)
+{
+    atomic_commit
+    {
+        if (ps[i].state == HUNGRY && left(i).state != EATING && right(i).state != EATING)
+        {
+            ps[i].state = EATING;
+            // sem_post(&S[i]);
+        }
+    }
+}
+
+void take_fork_TM(int i)
+{
+    synchronized
+    {
+        ps[i].state = HUNGRY;
+        test_TM(i);
+    }
+    // sem_wait(&S[i]);
+}
+
+void put_fork_TM(int i)
+{
+    synchronized
+    {
+        ps[i].state = THINKING;
+        test_TM(left(i).id);
+        test_TM(right(i).id);
+    }
+}
+
 void philosopher_lock(int i)
 {
     for (int j = 0; j < loop_count; j++)
     {
+        // ps is the array of philosophers
         ps[i].thinking();
         take_fork(i);
         ps[i].eating();
         put_fork(i);
     }
 }
-
+/* 
+! Wrong
 void philosopher_TM(int i)
 {
     for (int j = 0; j < loop_count; j++)
@@ -88,12 +122,25 @@ void philosopher_TM(int i)
         {
             if (left(i).state != EATING && right(i).state != EATING)
             {
-                for (int k = 0; k < 100; k++) // * Eating method not used as it is a error, un-safe transcation function
+                for (int k = 0; k < 100; k++)
                     ;
+                // * Eating method not used as it is a error, un-safe transcation function
             }
         }
         if (output)
             cout << i << " Eating End\n";
+    }
+}
+*/
+void philosopher_TM(int i)
+{
+    for (int j = 0; j < loop_count; j++)
+    {
+        // ps is the array of philosophers
+        ps[i].thinking();
+        take_fork_TM(i);
+        ps[i].eating();
+        put_fork_TM(i);
     }
 }
 
